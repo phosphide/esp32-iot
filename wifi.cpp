@@ -30,9 +30,11 @@ std::error_code WiFi::connect(const std::string &ssid, const std::string &passwo
 	RETURN_IF_ERROR( esp_wifi_start() );
 	RETURN_IF_ERROR( esp_wifi_set_storage(WIFI_STORAGE_RAM) );
 
-	wifi_config_t wifi_config;
-	strncpy(reinterpret_cast<char*>(wifi_config.sta.ssid), ssid.c_str(), 32);
-	strncpy(reinterpret_cast<char*>(wifi_config.sta.password), ssid.c_str(), 64);
+	wifi_config_t wifi_config = {
+		.sta = {}
+	};
+	ssid.copy(reinterpret_cast<char *>(wifi_config.sta.ssid), ssid.size() + 1);
+	password.copy(reinterpret_cast<char *>(wifi_config.sta.password), password.size() + 1);
 
 	RETURN_IF_ERROR( esp_wifi_disconnect() );
 	RETURN_IF_ERROR( esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config) );
