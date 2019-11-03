@@ -4,8 +4,6 @@
 #include <esp_wifi_types.h>
 #include <esp_event_loop.h>
 
-#include <cstring>
-
 #include "errors.hpp"
 
 Logger WiFi::LOGGER("WiFi");
