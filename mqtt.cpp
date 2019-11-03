@@ -7,7 +7,7 @@ EventGroupHandle_t MQTTClient::_event_group;
 std::multimap<std::string, std::function<void (const std::string &, const std::string &)>> MQTTClient::_callbacks;
 
 
-std::error_code MQTTClient::initialize(const std::string &broker_address) {
+std::error_code MQTTClient::initialize(const std::string &client_id, const std::string &broker_address) {
     LOGGER.debug("Initializing");
     esp_log_level_set("MQTT_CLIENT", ESP_LOG_NONE);
 
@@ -16,7 +16,7 @@ std::error_code MQTTClient::initialize(const std::string &broker_address) {
     esp_mqtt_client_config_t mqtt_cfg = {};
     mqtt_cfg.event_handle = _event_handler;
     mqtt_cfg.uri = broker_address.c_str();
-    mqtt_cfg.client_id = "ESP32";
+    mqtt_cfg.client_id = client_id.c_str();
 
     _client = esp_mqtt_client_init(&mqtt_cfg);
     if (_client == nullptr) {
