@@ -9,6 +9,8 @@
 
 #include <experimental/optional>
 
+#include "logger.hpp"
+
 namespace std {
 	template<class T>
 	constexpr const T& clamp( const T& v, const T& lo, const T& hi ) { // almost C++17
@@ -32,6 +34,12 @@ inline std::experimental::optional<int> stoi_check(const std::string& input) {
 		return output;
 	}
 	return {};
+}
+
+inline void log_if_error(const std::error_code &ec, const std::string &message) {
+    static Logger logger("APP");
+
+    logger.error(message, ec.message());
 }
 
 class Prescaler {
