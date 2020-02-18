@@ -13,7 +13,7 @@ class WiFi {
 
 public:
     static std::error_code initialize();
-    static std::error_code connect(const std::string &ssid, const std::string &password);
+    static std::error_code connect(const std::string &ssid, const std::string &password, TickType_t timeout);
 
     static void on_got_ip();
     static std::error_code on_disconnect();

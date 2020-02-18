@@ -20,14 +20,14 @@ std::error_code WiFi::initialize() {
 
 	RETURN_IF_ERROR( esp_event_loop_init(_event_handler, NULL) );
 
-	return {};
-}
-
-std::error_code WiFi::connect(const std::string &ssid, const std::string &password) {
 	RETURN_IF_ERROR( esp_wifi_set_mode(WIFI_MODE_STA) );
 	RETURN_IF_ERROR( esp_wifi_start() );
 	RETURN_IF_ERROR( esp_wifi_set_storage(WIFI_STORAGE_RAM) );
 
+	return {};
+}
+
+std::error_code WiFi::connect(const std::string &ssid, const std::string &password, TickType_t timeout) {
 	wifi_config_t wifi_config = {
 		.sta = {}
 	};
@@ -38,7 +38,7 @@ std::error_code WiFi::connect(const std::string &ssid, const std::string &passwo
 	RETURN_IF_ERROR( esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config) );
 	RETURN_IF_ERROR( esp_wifi_connect() );
 
-	EventBits_t eventgroup_bits = xEventGroupWaitBits(_event_group, CONNECTED_BIT, true, true, 30000 / portTICK_PERIOD_MS); // timeout after 30s
+	EventBits_t eventgroup_bits = xEventGroupWaitBits(_event_group, CONNECTED_BIT, true, true, timeout); // timeout after 30s
 	if ((eventgroup_bits & CONNECTED_BIT) != CONNECTED_BIT) {
 		return to_strong_error(ESP_ERR_TIMEOUT);
 	}

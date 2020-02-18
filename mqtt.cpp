@@ -8,7 +8,7 @@ std::function<void()> MQTTClient::_on_connection;
 std::multimap<std::string, std::function<void (const std::string &, const std::string &)>> MQTTClient::_callbacks;
 
 
-std::error_code MQTTClient::initialize(const std::string &client_id, const std::string &broker_address) {
+std::error_code MQTTClient::initialize(const std::string &client_id, const std::string &broker_address, TickType_t timeout) {
     LOGGER.debug("Initializing");
     esp_log_level_set("MQTT_CLIENT", ESP_LOG_NONE);
 
@@ -28,7 +28,7 @@ std::error_code MQTTClient::initialize(const std::string &client_id, const std::
     LOGGER.debug("Starting client");
     RETURN_IF_ERROR( esp_mqtt_client_start(_client) );
 
-    xEventGroupWaitBits(_event_group, CONNECTED_BIT, true, true, portMAX_DELAY);
+    xEventGroupWaitBits(_event_group, CONNECTED_BIT, true, true, timeout);
     return {};
 }
 
