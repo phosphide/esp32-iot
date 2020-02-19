@@ -35,6 +35,8 @@ std::string RuntimeErrorCategory::message(int32_t error_value) const
       return "Initializing MQTT client failed";
   case RuntimeError::MQTTPublishFailed:
       return "Publishing MQTT data failed";
+  case RuntimeError::MQTTSubscribeFailed:
+      return "Subscribing to MQTT topic failed";
   default:
       return "Unknown error";
   }

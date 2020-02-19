@@ -32,7 +32,9 @@ inline std::optional<int> stoi_check(const std::string& input) {
 inline void log_if_error(const std::error_code &ec, const std::string &message) {
     static Logger logger("APP");
 
-    logger.error(message, ec.message());
+    if (ec) {
+        logger.error(message, ec.message());
+    }
 }
 
 class Prescaler {

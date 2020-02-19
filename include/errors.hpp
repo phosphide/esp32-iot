@@ -26,6 +26,7 @@ enum class ESPError : esp_err_t {};
 enum class RuntimeError {
   MQTTInitializationFailed = 1,
   MQTTPublishFailed = 2,
+  MQTTSubscribeFailed = 3,
 };
 
 inline ESPError to_strong_error(esp_err_t err) {

@@ -9,27 +9,30 @@ std::multimap<std::string, std::function<void (const std::string &, const std::s
 
 
 std::error_code MQTTClient::initialize(const std::string &client_id, const std::string &broker_address, TickType_t timeout) {
-    LOGGER.debug("Initializing");
-    esp_log_level_set("MQTT_CLIENT", ESP_LOG_NONE);
+	LOGGER.debug("Initializing");
+	esp_log_level_set("MQTT_CLIENT", ESP_LOG_NONE);
 
-    _event_group = xEventGroupCreate();
+	_event_group = xEventGroupCreate();
 
-    esp_mqtt_client_config_t mqtt_cfg = {};
-    mqtt_cfg.event_handle = _event_handler;
-    mqtt_cfg.uri = broker_address.c_str();
-    mqtt_cfg.client_id = client_id.c_str();
+	esp_mqtt_client_config_t mqtt_cfg = {};
+	mqtt_cfg.event_handle = _event_handler;
+	mqtt_cfg.uri = broker_address.c_str();
+	mqtt_cfg.client_id = client_id.c_str();
 
-    _client = esp_mqtt_client_init(&mqtt_cfg);
-    if (_client == nullptr) {
-        LOGGER.error("Error initializing client");
-        return RuntimeError::MQTTInitializationFailed;
-    }
+	_client = esp_mqtt_client_init(&mqtt_cfg);
+	if (_client == nullptr) {
+		LOGGER.error("Error initializing client");
+		return RuntimeError::MQTTInitializationFailed;
+	}
 
-    LOGGER.debug("Starting client");
-    RETURN_IF_ERROR( esp_mqtt_client_start(_client) );
+	LOGGER.info("Starting client");
+	RETURN_IF_ERROR( esp_mqtt_client_start(_client) );
+	
+	if ((xEventGroupWaitBits(_event_group, CONNECTED_BIT, true, true, timeout) & CONNECTED_BIT) == 0) {
+		return RuntimeError::MQTTInitializationFailed;
+	}
 
-    xEventGroupWaitBits(_event_group, CONNECTED_BIT, true, true, timeout);
-    return {};
+	return {};
 }
 
 std::error_code MQTTClient::publish(const std::string &topic, const std::string &data, bool retain) {
@@ -41,7 +44,9 @@ std::error_code MQTTClient::publish(const std::string &topic, const std::string 
 }
 
 std::error_code MQTTClient::subscribe(const std::string &topic) {
-	RETURN_IF_ERROR( esp_mqtt_client_subscribe(_client, topic.c_str(), 1) );
+	if(esp_mqtt_client_subscribe(_client, topic.c_str(), 1) == -1) {
+		return RuntimeError::MQTTSubscribeFailed;
+	}
 	return {};
 }
 
@@ -60,6 +65,9 @@ esp_err_t MQTTClient::_event_handler(esp_mqtt_event_handle_t event)  {
 		case MQTT_EVENT_CONNECTED: {
 			LOGGER.info("MQTT_EVENT_CONNECTED");
 			xEventGroupSetBits(_event_group, CONNECTED_BIT);
+			if (_on_connection) {
+				_on_connection();
+			}
 			break;
 		}
 		case MQTT_EVENT_DISCONNECTED: {
