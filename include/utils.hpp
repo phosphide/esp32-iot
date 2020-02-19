@@ -7,18 +7,11 @@
 
 #pragma once
 
-#include <experimental/optional>
+#include <optional>
 
 #include "logger.hpp"
 
-namespace std {
-	template<class T>
-	constexpr const T& clamp( const T& v, const T& lo, const T& hi ) { // almost C++17
-		return (v < lo) ? lo : (hi < v) ? hi : v;
-	}
-}
-
-inline std::experimental::optional<float> stof_check(const std::string& input) {
+inline std::optional<float> stof_check(const std::string& input) {
 	size_t good_bytes;
 	auto output = std::stof(input, &good_bytes);
 	if (good_bytes == input.size()) {
@@ -27,7 +20,7 @@ inline std::experimental::optional<float> stof_check(const std::string& input) {
 	return {};
 }
 
-inline std::experimental::optional<int> stoi_check(const std::string& input) {
+inline std::optional<int> stoi_check(const std::string& input) {
 	size_t good_bytes;
 	auto output = std::stoi(input, &good_bytes);
 	if (good_bytes == input.size()) {
