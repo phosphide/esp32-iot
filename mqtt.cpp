@@ -4,7 +4,7 @@
 Logger MQTTClient::LOGGER("MQTTClient");
 esp_mqtt_client_handle_t MQTTClient::_client;
 EventGroupHandle_t MQTTClient::_event_group;
-std::function<void()> MQTTClient::_on_connection;
+std::vector<std::function<void()>> MQTTClient::_connection_callbacks;
 std::multimap<std::string, std::function<void(const std::string &, const std::string &)>> MQTTClient::_callbacks;
 
 std::error_code MQTTClient::initialize(const std::string &client_id, const std::string &broker_address,
@@ -51,7 +51,7 @@ std::error_code MQTTClient::subscribe(const std::string &topic) {
 }
 
 void MQTTClient::add_connection_callback(std::function<void()> callback) {
-	_on_connection = std::move(callback);
+	_connection_callbacks.emplace_back(std::move(callback));
 }
 
 void MQTTClient::add_callback(const std::string &topic,
@@ -66,8 +66,8 @@ esp_err_t MQTTClient::_event_handler(esp_mqtt_event_handle_t event) {
 	case MQTT_EVENT_CONNECTED: {
 		LOGGER.info("MQTT_EVENT_CONNECTED");
 		xEventGroupSetBits(_event_group, CONNECTED_BIT);
-		if (_on_connection) {
-			_on_connection();
+		for (const auto &callback : _connection_callbacks) {
+			callback();
 		}
 		break;
 	}

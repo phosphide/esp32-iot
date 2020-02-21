@@ -6,6 +6,7 @@
 #include <functional>
 #include <map>
 #include <mqtt_client.h>
+#include <vector>
 
 #include "logger.hpp"
 
@@ -29,7 +30,7 @@ public:
 private:
 	static esp_mqtt_client_handle_t _client;
 	static EventGroupHandle_t _event_group;
-	static std::function<void()> _on_connection;
+	static std::vector<std::function<void()>> _connection_callbacks;
 	static std::multimap<std::string, std::function<void(const std::string &, const std::string &)>> _callbacks;
 
 	static esp_err_t _event_handler(esp_mqtt_event_handle_t event);
