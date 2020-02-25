@@ -10,7 +10,7 @@ std::multimap<std::string, std::function<void(const std::string &, const std::st
 std::error_code MQTTClient::initialize(const std::string &client_id, const std::string &broker_address,
                                        const std::string &last_will_topic, TickType_t timeout) {
 	LOGGER.debug("Initializing");
-	esp_log_level_set("MQTT_CLIENT", ESP_LOG_NONE);
+	esp_log_level_set("MQTT_CLIENT", ESP_LOG_WARN);
 
 	_event_group = xEventGroupCreate();
 
@@ -28,7 +28,7 @@ std::error_code MQTTClient::initialize(const std::string &client_id, const std::
 	LOGGER.info("Starting client");
 	RETURN_IF_ERROR(esp_mqtt_client_start(_client));
 
-	if ((xEventGroupWaitBits(_event_group, CONNECTED_BIT, true, true, timeout) & CONNECTED_BIT) == 0) {
+	if ((xEventGroupWaitBits(_event_group, CONNECTED_BIT, false, true, timeout) & CONNECTED_BIT) == 0) {
 		return RuntimeError::MQTTInitializationFailed;
 	}
 
@@ -74,7 +74,6 @@ esp_err_t MQTTClient::_event_handler(esp_mqtt_event_handle_t event) {
 	case MQTT_EVENT_DISCONNECTED: {
 		LOGGER.info("MQTT_EVENT_DISCONNECTED");
 		xEventGroupClearBits(_event_group, CONNECTED_BIT);
-		esp_mqtt_client_start(_client);
 		break;
 	}
 
