@@ -14,7 +14,7 @@ std::error_code MQTTClient::initialize(const std::string &client_id, const std::
 
 	_event_group = xEventGroupCreate();
 
-	esp_mqtt_client_config_t mqtt_cfg = {.lwt_topic = last_will_topic.c_str(), .lwt_msg = "offline", .lwt_qos = 1};
+	esp_mqtt_client_config_t mqtt_cfg = {.lwt_topic = last_will_topic.c_str(), .lwt_msg = "offline", .lwt_qos = 1, .lwt_retain = true};
 	mqtt_cfg.event_handle = _event_handler;
 	mqtt_cfg.uri = broker_address.c_str();
 	mqtt_cfg.client_id = client_id.c_str();
