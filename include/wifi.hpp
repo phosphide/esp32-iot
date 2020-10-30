@@ -21,5 +21,6 @@ public:
 private:
     static EventGroupHandle_t _event_group;
 
-    static esp_err_t _event_handler(void *ctx, system_event_t *event);
+    static void _on_got_ip(void *ctx, esp_event_base_t event_base, int32_t event_id, void *event_data);
+    static void _event_handler(void *ctx, esp_event_base_t event_base, int32_t event_id, void *userdata);
 };
