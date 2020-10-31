@@ -8,6 +8,7 @@
 
 Logger WiFi::LOGGER("WiFi");
 EventGroupHandle_t WiFi::_event_group;
+bool WiFi::_is_initialized = false;
 
 std::error_code WiFi::initialize() {
 	LOGGER.debug("Initializing");
@@ -24,6 +25,7 @@ std::error_code WiFi::initialize() {
 	RETURN_IF_ERROR(esp_wifi_set_mode(WIFI_MODE_STA));
 	RETURN_IF_ERROR(esp_wifi_set_storage(WIFI_STORAGE_RAM));
 
+	_is_initialized = true;
 	return {};
 }
 
@@ -41,11 +43,6 @@ std::error_code WiFi::connect(const std::string &ssid, const std::string &passwo
 		return to_strong_error(ESP_ERR_TIMEOUT);
 	}
 
-	return {};
-}
-
-std::error_code WiFi::on_disconnect() {
-	RETURN_IF_ERROR(esp_wifi_connect());
 	return {};
 }
 
