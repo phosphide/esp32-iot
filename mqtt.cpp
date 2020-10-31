@@ -15,10 +15,12 @@ std::error_code MQTTClient::initialize(const std::string &client_id, const std::
 
 	_event_group = xEventGroupCreate();
 
-	esp_mqtt_client_config_t mqtt_cfg = {
-	    .lwt_topic = last_will_topic.c_str(), .lwt_msg = "offline", .lwt_qos = 1, .lwt_retain = true};
-	mqtt_cfg.uri = broker_address.c_str();
-	mqtt_cfg.client_id = client_id.c_str();
+	esp_mqtt_client_config_t mqtt_cfg = {.uri = broker_address.c_str(),
+	                                     .client_id = client_id.c_str(),
+	                                     .lwt_topic = last_will_topic.c_str(),
+	                                     .lwt_msg = "offline",
+	                                     .lwt_qos = 1,
+	                                     .lwt_retain = true};
 
 	_client = esp_mqtt_client_init(&mqtt_cfg);
 	if (_client == nullptr) {
