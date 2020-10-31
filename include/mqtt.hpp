@@ -23,8 +23,11 @@ public:
 	static void add_callback(const std::string &topic,
 	                         std::function<void(const std::string &, const std::string &)> callback);
 
-	static bool is_connected() {
-		return (xEventGroupGetBitsFromISR(_event_group) & CONNECTED_BIT) != (EventBits_t)0;
+	static inline bool is_connected() {
+		if (_is_initialized) {
+			return (xEventGroupGetBitsFromISR(_event_group) & CONNECTED_BIT) != (EventBits_t)0;
+		}
+		return false;
 	}
 
 private:
@@ -32,6 +35,7 @@ private:
 	static EventGroupHandle_t _event_group;
 	static std::vector<std::function<void()>> _connection_callbacks;
 	static std::multimap<std::string, std::function<void(const std::string &, const std::string &)>> _callbacks;
+	static bool _is_initialized;
 
 	static void _event_handler(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data);
 };

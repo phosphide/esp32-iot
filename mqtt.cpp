@@ -6,6 +6,7 @@ esp_mqtt_client_handle_t MQTTClient::_client;
 EventGroupHandle_t MQTTClient::_event_group;
 std::vector<std::function<void()>> MQTTClient::_connection_callbacks;
 std::multimap<std::string, std::function<void(const std::string &, const std::string &)>> MQTTClient::_callbacks;
+bool MQTTClient::_is_initialized = false;
 
 std::error_code MQTTClient::initialize(const std::string &client_id, const std::string &broker_address,
                                        const std::string &last_will_topic, TickType_t timeout) {
@@ -33,6 +34,7 @@ std::error_code MQTTClient::initialize(const std::string &client_id, const std::
 		return RuntimeError::MQTTInitializationFailed;
 	}
 
+	_is_initialized = true;
 	return {};
 }
 
