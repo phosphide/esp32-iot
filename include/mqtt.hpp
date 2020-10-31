@@ -33,5 +33,5 @@ private:
 	static std::vector<std::function<void()>> _connection_callbacks;
 	static std::multimap<std::string, std::function<void(const std::string &, const std::string &)>> _callbacks;
 
-	static esp_err_t _event_handler(esp_mqtt_event_handle_t event);
+	static void _event_handler(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data);
 };

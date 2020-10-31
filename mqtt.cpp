@@ -14,8 +14,8 @@ std::error_code MQTTClient::initialize(const std::string &client_id, const std::
 
 	_event_group = xEventGroupCreate();
 
-	esp_mqtt_client_config_t mqtt_cfg = {.lwt_topic = last_will_topic.c_str(), .lwt_msg = "offline", .lwt_qos = 1, .lwt_retain = true};
-	mqtt_cfg.event_handle = _event_handler;
+	esp_mqtt_client_config_t mqtt_cfg = {
+	    .lwt_topic = last_will_topic.c_str(), .lwt_msg = "offline", .lwt_qos = 1, .lwt_retain = true};
 	mqtt_cfg.uri = broker_address.c_str();
 	mqtt_cfg.client_id = client_id.c_str();
 
@@ -24,6 +24,7 @@ std::error_code MQTTClient::initialize(const std::string &client_id, const std::
 		LOGGER.error("Error initializing client");
 		return RuntimeError::MQTTInitializationFailed;
 	}
+	RETURN_IF_ERROR(esp_mqtt_client_register_event(_client, MQTT_EVENT_ANY, _event_handler, nullptr));
 
 	LOGGER.info("Starting client");
 	RETURN_IF_ERROR(esp_mqtt_client_start(_client));
@@ -59,10 +60,10 @@ void MQTTClient::add_callback(const std::string &topic,
 	_callbacks.emplace(topic, callback);
 }
 
-esp_err_t MQTTClient::_event_handler(esp_mqtt_event_handle_t event) {
-	auto client = event->client;
-	// your_context_t *context = event->context;
-	switch (event->event_id) {
+void MQTTClient::_event_handler(void * /*handler_args*/, esp_event_base_t /*base*/, int32_t event_id,
+                                void *event_data) {
+	auto event = reinterpret_cast<esp_mqtt_event_handle_t>(event_data);
+	switch (event_id) {
 	case MQTT_EVENT_CONNECTED: {
 		LOGGER.info("MQTT_EVENT_CONNECTED");
 		xEventGroupSetBits(_event_group, CONNECTED_BIT);
@@ -111,5 +112,4 @@ esp_err_t MQTTClient::_event_handler(esp_mqtt_event_handle_t event) {
 		break;
 	}
 	}
-	return ESP_OK;
 }
