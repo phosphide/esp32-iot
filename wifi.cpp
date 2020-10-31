@@ -22,7 +22,6 @@ std::error_code WiFi::initialize() {
 	RETURN_IF_ERROR(esp_event_handler_register(IP_EVENT, IP_EVENT_STA_GOT_IP, _on_got_ip, nullptr));
 
 	RETURN_IF_ERROR(esp_wifi_set_mode(WIFI_MODE_STA));
-	RETURN_IF_ERROR(esp_wifi_start());
 	RETURN_IF_ERROR(esp_wifi_set_storage(WIFI_STORAGE_RAM));
 
 	return {};
@@ -33,9 +32,8 @@ std::error_code WiFi::connect(const std::string &ssid, const std::string &passwo
 	ssid.copy(reinterpret_cast<char *>(wifi_config.sta.ssid), ssid.size() + 1);
 	password.copy(reinterpret_cast<char *>(wifi_config.sta.password), password.size() + 1);
 
-	RETURN_IF_ERROR(esp_wifi_disconnect());
 	RETURN_IF_ERROR(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config));
-	RETURN_IF_ERROR(esp_wifi_connect());
+	RETURN_IF_ERROR(esp_wifi_start());
 
 	EventBits_t eventgroup_bits =
 	    xEventGroupWaitBits(_event_group, CONNECTED_BIT, true, true, timeout); // timeout after 30s
@@ -51,12 +49,12 @@ std::error_code WiFi::on_disconnect() {
 	return {};
 }
 
-void WiFi::_on_got_ip(void */*ctx*/, esp_event_base_t /*event_base*/, int32_t /*event_id*/, void */*event_data*/) {
+void WiFi::_on_got_ip(void * /*ctx*/, esp_event_base_t /*event_base*/, int32_t /*event_id*/, void * /*event_data*/) {
 	LOGGER.debug("GOT_IP");
 	xEventGroupSetBits(_event_group, CONNECTED_BIT);
 }
 
-void WiFi::_event_handler(void */*ctx*/, esp_event_base_t /*event_base*/, int32_t event_id, void */*userdata*/) {
+void WiFi::_event_handler(void * /*ctx*/, esp_event_base_t /*event_base*/, int32_t event_id, void * /*userdata*/) {
 	switch (event_id) {
 	case WIFI_EVENT_STA_START: {
 		LOGGER.debug("STA_START");

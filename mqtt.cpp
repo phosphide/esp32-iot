@@ -94,8 +94,8 @@ void MQTTClient::_event_handler(void * /*handler_args*/, esp_event_base_t /*base
 		std::string topic(event->topic, 0, event->topic_len);
 		std::string data(event->data, 0, event->data_len);
 		LOGGER.info("MQTT_EVENT_DATA");
-		LOGGER.debug("TOPIC=" + topic);
-		LOGGER.debug("DATA=" + data);
+		LOGGER.debug("TOPIC={}", topic);
+		LOGGER.debug("DATA={}", data);
 		auto matches = _callbacks.equal_range(topic);
 		for (auto it = matches.first; it != matches.second; ++it) {
 			LOGGER.debug("callback match");
