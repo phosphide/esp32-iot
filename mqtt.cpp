@@ -91,7 +91,6 @@ void MQTTClient::_event_handler(void * /*handler_args*/, esp_event_base_t /*base
 		break;
 	}
 	case MQTT_EVENT_PUBLISHED: {
-		LOGGER.info("MQTT_EVENT_PUBLISHED, msg_id={}", event->msg_id);
 		break;
 	}
 	case MQTT_EVENT_DATA: {
