@@ -17,7 +17,7 @@ class MQTTClient {
 public:
 	static std::error_code initialize(const std::string &client_id, const std::string &broker_address,
 	                                  const std::string &last_will_topic, TickType_t timeout);
-	static std::error_code publish(const std::string &topic, const std::string &data, bool retain = false);
+	static std::error_code publish(const std::string &topic, const std::string &data, bool retain = false, int qos = 1);
 	static std::error_code subscribe(const std::string &topic);
 	static void add_connection_callback(std::function<void()> callback);
 	static void add_callback(const std::string &topic,

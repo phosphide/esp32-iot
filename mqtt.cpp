@@ -40,8 +40,8 @@ std::error_code MQTTClient::initialize(const std::string &client_id, const std::
 	return {};
 }
 
-std::error_code MQTTClient::publish(const std::string &topic, const std::string &data, bool retain) {
-	if (esp_mqtt_client_publish(_client, topic.c_str(), data.c_str(), data.size(), 1, static_cast<int>(retain)) == -1) {
+std::error_code MQTTClient::publish(const std::string &topic, const std::string &data, bool retain, int qos) {
+	if (esp_mqtt_client_publish(_client, topic.c_str(), data.c_str(), data.size(), qos, static_cast<int>(retain)) == -1) {
 		return RuntimeError::MQTTPublishFailed;
 	}
 
