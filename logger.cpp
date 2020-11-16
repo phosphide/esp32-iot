@@ -39,7 +39,7 @@ int Logger::vprintf_esp_message(const char *message, va_list args) {
 void Logger::write_message(const std::string &message) {
 	std::cout << message;
 	if (mqtt_enabled) {
-		MQTTClient::publish(mqtt_topic, message);
+		MQTTClient::publish(mqtt_topic, message, false, 0);
 	}
 }
 
