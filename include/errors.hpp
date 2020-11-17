@@ -21,6 +21,13 @@ inline void RESTART_IF_ERROR(const std::error_code &ec) {
 	}
 }
 
+inline void RESTART_IF_ERROR(esp_err_t esp_error) {
+	if (esp_error != ESP_OK) {
+		std::cerr << "CRITICAL: " << esp_err_to_name(esp_error) << " - RESTARTING" << std::endl;
+		esp_restart();
+	}
+}
+
 enum class ESPError : esp_err_t {};
 
 enum class RuntimeError {
