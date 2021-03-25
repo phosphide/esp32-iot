@@ -34,7 +34,7 @@ std::error_code WiFi::connect(const std::string &ssid, const std::string &passwo
 	ssid.copy(reinterpret_cast<char *>(wifi_config.sta.ssid), ssid.size() + 1);
 	password.copy(reinterpret_cast<char *>(wifi_config.sta.password), password.size() + 1);
 
-	RETURN_IF_ERROR(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config));
+	RETURN_IF_ERROR(esp_wifi_set_config(WIFI_IF_STA, &wifi_config));
 	RETURN_IF_ERROR(esp_wifi_start());
 
 	EventBits_t eventgroup_bits =
