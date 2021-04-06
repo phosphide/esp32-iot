@@ -18,6 +18,11 @@ public:
 	static void initialize(LogLevel log_level, std::string target_mqtt_topic, bool mqtt_logging_enabled = false);
 	static void set_mqtt_logging(bool enabled);
 
+	template <typename... Ts> static void log_globally(const Ts &...args) {
+		auto message_content = fmt::format(args...);
+		write_message(message_content);
+	}
+
 	Logger(const std::string &name);
 
 	template <typename... Ts> void debug(const Ts &...args) const {

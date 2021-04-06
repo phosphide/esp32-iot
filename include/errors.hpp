@@ -6,6 +6,8 @@
 #include <esp_err.h>
 #include <esp_system.h>
 
+#include "logger.hpp"
+
 #define RETURN_IF_ERROR(function_result)                                                                               \
 	do {                                                                                                                 \
 		if (function_result != ESP_OK) {                                                                                   \
@@ -16,14 +18,14 @@
 
 inline void RESTART_IF_ERROR(const std::error_code &ec) {
 	if (ec) {
-		std::cerr << "CRITICAL: " << ec.message() << " - RESTARTING" << std::endl;
+		Logger::log_globally("[CRITICAL]: {} - RESTARTING", ec.message());
 		esp_restart();
 	}
 }
 
 inline void RESTART_IF_ERROR(esp_err_t esp_error) {
 	if (esp_error != ESP_OK) {
-		std::cerr << "CRITICAL: " << esp_err_to_name(esp_error) << " - RESTARTING" << std::endl;
+		Logger::log_globally("[CRITICAL]: {} - RESTARTING", esp_err_to_name(esp_error));
 		esp_restart();
 	}
 }
