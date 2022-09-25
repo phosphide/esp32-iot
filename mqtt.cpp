@@ -95,7 +95,7 @@ void MQTTClient::_event_handler(void * /*handler_args*/, esp_event_base_t /*base
 	}
 	case MQTT_EVENT_DATA: {
 		std::string topic(event->topic, 0, event->topic_len);
-		std::string data(event->data, 0, event->data_len);
+		std::string data = event->data_len ? std::string(event->data, 0, event->data_len) : std::string();
 		LOGGER.info("MQTT_EVENT_DATA");
 		LOGGER.debug("TOPIC={}", topic);
 		LOGGER.debug("DATA={}", data);
