@@ -11,7 +11,7 @@ const char *ESPErrorCategory::name() const noexcept
 {
   return "ESP";
 }
-std::string ESPErrorCategory::message(int32_t error_value) const
+std::string ESPErrorCategory::message(int error_value) const
 {
   return esp_err_to_name(error_value);
 }
@@ -27,7 +27,7 @@ const char *RuntimeErrorCategory::name() const noexcept
 {
   return "Runtime";
 }
-std::string RuntimeErrorCategory::message(int32_t error_value) const
+std::string RuntimeErrorCategory::message(int error_value) const
 {
   switch (static_cast<RuntimeError>(error_value))
   {
