@@ -38,7 +38,7 @@ std::error_code WiFi::connect(const std::string &ssid, const std::string &passwo
 	RETURN_IF_ERROR(esp_wifi_start());
 
 	EventBits_t eventgroup_bits =
-	    xEventGroupWaitBits(_event_group, CONNECTED_BIT, true, true, timeout); // timeout after 30s
+	    xEventGroupWaitBits(_event_group, CONNECTED_BIT, false, true, timeout); // timeout after 30s
 	if ((eventgroup_bits & CONNECTED_BIT) != CONNECTED_BIT) {
 		return to_strong_error(ESP_ERR_TIMEOUT);
 	}
